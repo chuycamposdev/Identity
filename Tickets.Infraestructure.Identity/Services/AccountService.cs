@@ -67,7 +67,7 @@ namespace Tickets.Infraestructure.Identity.Services
                 user.LastName,
                 token,
                 userRoles.ToList(),
-                refreshToken)
+                refreshToken), string.Empty
             );
 
         }
@@ -75,7 +75,7 @@ namespace Tickets.Infraestructure.Identity.Services
         public async Task<ResponseModel<RefreshTokenDto>> RefreshToken(RefreshTokenDto refreshTokenDto)
         {
             var refreshToken = await _jwtTokenGenerator.ValidateRefreshToken(refreshTokenDto);
-            return new ResponseModel<RefreshTokenDto>(refreshToken);
+            return new ResponseModel<RefreshTokenDto>(refreshToken, string.Empty);
         }
 
         private async Task<ApplicationUser> ValidateUserCredentials(LoginDto loginModel)

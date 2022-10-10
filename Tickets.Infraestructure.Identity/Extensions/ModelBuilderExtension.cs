@@ -29,8 +29,8 @@ namespace Tickets.Infraestructure.Identity.Extensions
 
             List<ApplicationUser> users = new List<ApplicationUser>()
             {
-                new ApplicationUser{ Email = userEmail, NormalizedEmail = userEmail},
-                new ApplicationUser{ Email = adminEmail, NormalizedEmail = adminEmail}
+                new ApplicationUser{ Email = userEmail, NormalizedEmail = userEmail, FirstName ="Basic", LastName="User"},
+                new ApplicationUser{ Email = adminEmail, NormalizedEmail = adminEmail, FirstName = "Jesus", LastName = "Campos"}
             };
 
             modelBuilder.Entity<ApplicationUser>().HasData(users);
