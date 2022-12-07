@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Tickets.Aplication.Dtos.Authorization;
+using Tickets.Aplication.Features.Account.Commands;
+using Tickets.Aplication.Features.Account.Login;
 using Tickets.Aplication.Interfaces.Account;
 
 namespace API.Controllers
@@ -9,7 +11,7 @@ namespace API.Controllers
     [Route("api/[controller]")]
     [ApiController]
     //[Authorize]
-    public class AccountController : ControllerBase
+    public class AccountController : BaseApiController
     {
         private readonly IAccountService _accountService;
 
@@ -18,19 +20,17 @@ namespace API.Controllers
             _accountService = accountService;
         }
 
-        //[Authorize]
+        
         [HttpPost("login")]
-        public async Task<IActionResult> Login(LoginDto loginDto)
+        public async Task<IActionResult> Login(SigninUserCommand request)
         {
-            var userDto = await _accountService.LoginAsync(loginDto);
-            return Ok(userDto);
+            return Ok(await Mediator.Send(request));
         }
 
         [HttpPost("register-account")]
-        public async Task<IActionResult> RegisterUser([FromBody] RegisterDto register)
+        public async Task<IActionResult> RegisterUser(RegisterUserCommand request)
         {
-            var account = await _accountService.RegisterAccountAsync(register);
-            return Ok(account);
+            return Ok(await Mediator.Send(request));
         }
 
         [HttpPost("refresh-token")]

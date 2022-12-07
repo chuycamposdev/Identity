@@ -10,8 +10,9 @@ namespace Tickets.Aplication.Interfaces.Account
 {
     public interface IAccountService
     {
-        Task<ResponseModel<string>> RegisterAccountAsync(RegisterDto request);
-        Task<ResponseModel<UserDto>> LoginAsync(LoginDto requestModel);
-        Task<ResponseModel<RefreshTokenDto>> RefreshToken(RefreshTokenDto refreshTokenDto);
+        Task<string> RegisterAccountAsync(RegisterModel request);
+        Task<UserDto> LoginAsync(LoginModel requestModel);
+        Task<RefreshTokenDto> RefreshToken(RefreshTokenDto refreshTokenDto);
+        Task<string> GenerateConfirmationTokenAsync(string userID);
     }
 }

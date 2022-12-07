@@ -7,6 +7,7 @@ using Tickets.Aplication.Interfaces.Account;
 using Tickets.Aplication.Models;
 using Tickets.Domain.Settings;
 using Tickets.Infraestructure.Identity.Models;
+using Tickets.Infraestructure.Shared;
 
 namespace Tickets.Infraestructure.Identity.Services
 {
@@ -33,7 +34,7 @@ namespace Tickets.Infraestructure.Identity.Services
             _mapper = mapper;
         }
 
-        public async Task<ResponseModel<string>> RegisterAccountAsync(RegisterDto request)
+        public async Task<string> RegisterAccountAsync(RegisterModel request)
         {
             var userExists = await _userManager.FindByEmailAsync(request.Email);
             if (userExists != null)
@@ -50,16 +51,23 @@ namespace Tickets.Infraestructure.Identity.Services
                 ThrowRegisterErrorMessage(result);
             }
 
-            return new ResponseModel<string>(user.Id, "Congratulations, user registered succesfully");
+            return user.Id;
         }
 
-        public async Task<ResponseModel<UserDto>> LoginAsync(LoginDto requestModel)
+
+        public async Task<string> GenerateConfirmationTokenAsync(string userID)
         {
-            var user = await ValidateUserCredentials(requestModel);
+            var user = await _userManager.FindByIdAsync(userID);
+            return HttpUtility.UrlEncode(await _userManager.GenerateEmailConfirmationTokenAsync(user));
+        }
+
+        public async Task<UserDto> LoginAsync(LoginModel loginModel)
+        {
+            var user = await ValidateUserCredentials(loginModel);
             var userRoles = await _userManager.GetRolesAsync(user);
-            string token = await _jwtTokenGenerator.GenerateJWTTokenAsync(requestModel.Email);
+            string token = await _jwtTokenGenerator.GenerateJWTTokenAsync(loginModel.Email);
             string refreshToken = await _jwtTokenGenerator.GenerateRefreshToken(user.Id, token);
-            return new ResponseModel<UserDto>(new UserDto(
+            return new UserDto(
                 user.Id,
                 user.Email,
                 user.PhoneNumber,
@@ -67,20 +75,17 @@ namespace Tickets.Infraestructure.Identity.Services
                 user.LastName,
                 token,
                 userRoles.ToList(),
-                refreshToken), string.Empty
-            );
-
+                refreshToken);
         }
 
-        public async Task<ResponseModel<RefreshTokenDto>> RefreshToken(RefreshTokenDto refreshTokenDto)
+        public async Task<RefreshTokenDto> RefreshToken(RefreshTokenDto refreshTokenDto)
         {
             var refreshToken = await _jwtTokenGenerator.ValidateRefreshToken(refreshTokenDto);
-            return new ResponseModel<RefreshTokenDto>(refreshToken, string.Empty);
+            return new RefreshTokenDto(refreshToken.RefreshToken, refreshToken.Token, refreshToken.UserId);
         }
 
-        private async Task<ApplicationUser> ValidateUserCredentials(LoginDto loginModel)
+        private async Task<ApplicationUser> ValidateUserCredentials(LoginModel loginModel)
         {
-            var jwt = new JwtSettings();
             var user = await _userManager.FindByEmailAsync(loginModel.Email);
             if (user == null)
                 throw new InvalidCredentialsException();
