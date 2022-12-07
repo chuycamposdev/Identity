@@ -1,5 +1,5 @@
 # Identity
-Service for managing Autorization/Authentication in Net 6
+Service for managing Authorization/Authentication in Net 6
 
 -- First Code -
 -- Run below command in Package Manager Console to add migration files 
