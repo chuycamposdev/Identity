@@ -13,7 +13,7 @@ namespace Tickets.Infraestructure.Identity.Mapping
     {
         public MappingProfile()
         {
-            CreateMap<RegisterDto, ApplicationUser>()
+            CreateMap<RegisterModel, ApplicationUser>()
                 .ForMember(x => x.UserName, dest => dest.MapFrom(y => y.Email))
                 .ReverseMap();
         }

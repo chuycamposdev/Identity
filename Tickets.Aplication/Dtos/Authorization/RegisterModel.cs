@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Tickets.Aplication.Dtos.Authorization
 {
-    public record RegisterDto(
+    public record RegisterModel(
         string FirstName,
         string LastName,
         string Email,

@@ -17,7 +17,7 @@ namespace Tickets.Aplication.Models
         {
         }
 
-        public ResponseModel(T? data, string? message)
+        public ResponseModel(T? data, string? message = "")
         {
             Succeeded = true;
             Message = message;
